@@ -1,0 +1,356 @@
+/* ==========================================================================
+   GLOBALS.CSS
+   Design system core using 2026-friendly CSS features:
+   - Cascade Layers
+   - OKLCH color tokens
+   - Fluid type and spacing with clamp()
+   - Logical properties for better i18n / writing mode support
+   - "Reset Plus" with accessibility-minded defaults
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1) Cascade Layer Order
+   Defining layer order up front makes the cascade intentional and predictable.
+   Later layers override earlier ones when specificity is otherwise equal.
+   -------------------------------------------------------------------------- */
+@layer reset, base, theme;
+
+/* ==========================================================================
+   RESET LAYER
+   A "Reset Plus" that removes common browser inconsistencies while preserving
+   accessibility-friendly defaults where useful.
+   ========================================================================== */
+@layer reset {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	html {
+		/* Smooth scrolling feels nice for in-page links. */
+		scroll-behavior: smooth;
+
+		/*
+      More robust line-height inheritance strategy:
+      set at root, inherit broadly.
+    */
+		line-height: 1.5;
+
+		/*
+      Better text rendering on modern devices.
+      These are gentle hints, not magic spells.
+    */
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
+	/*
+    Respect users who prefer reduced motion.
+    Smooth scrolling is disabled in that case.
+  */
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+		}
+	}
+
+	body,
+	h1,
+	h2,
+	h3,
+	h4,
+	p,
+	figure,
+	blockquote,
+	dl,
+	dd {
+		margin: 0;
+	}
+
+	ul[role="list"],
+	ol[role="list"] {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	body {
+		min-block-size: 100vh;
+	}
+
+	img,
+	picture,
+	svg,
+	video,
+	canvas {
+		display: block;
+		max-inline-size: 100%;
+		block-size: auto;
+	}
+
+	input,
+	button,
+	textarea,
+	select {
+		font: inherit;
+	}
+
+	button,
+	[type="button"],
+	[type="submit"],
+	[type="reset"] {
+		cursor: pointer;
+	}
+
+	textarea:not([rows]) {
+		min-block-size: 8em;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
+
+	/*
+    Make anchor scrolling account for sticky nav in the future.
+  */
+	:target {
+		scroll-margin-block-start: 6rem;
+	}
+}
+
+/* ==========================================================================
+   BASE LAYER
+   Structural tokens, typography scales, spacing scales, and element defaults.
+   ========================================================================== */
+@layer base {
+	:root {
+		/* ----------------------------------------------------------------------
+       OKLCH DESIGN TOKENS
+       OKLCH gives more perceptually uniform color control than older spaces.
+       These values are tuned for a dark, modern portfolio foundation.
+       ---------------------------------------------------------------------- */
+		--color-bg: oklch(0.18 0.02 260);
+		--color-bg-elevated: oklch(0.24 0.03 260 / 0.72);
+		--color-surface: oklch(0.28 0.03 255 / 0.66);
+		--color-surface-strong: oklch(0.34 0.03 255 / 0.84);
+
+		--color-text: oklch(0.96 0.01 255);
+		--color-text-muted: oklch(0.8 0.02 255);
+		--color-border: oklch(0.68 0.03 255 / 0.22);
+
+		--color-accent: oklch(0.72 0.16 240);
+		--color-accent-strong: oklch(0.78 0.18 235);
+		--color-accent-contrast: oklch(0.18 0.02 255);
+
+		--color-focus: oklch(0.84 0.14 105);
+
+		/* ----------------------------------------------------------------------
+       FLUID TYPOGRAPHY
+       clamp(min, preferred, max) keeps text responsive without breakpoints.
+       ---------------------------------------------------------------------- */
+		--font-family-sans: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+		--font-size-step--1: clamp(0.875rem, 0.84rem + 0.18vw, 0.96rem);
+		--font-size-step-0: clamp(1rem, 0.94rem + 0.3vw, 1.125rem);
+		--font-size-step-1: clamp(1.25rem, 1.12rem + 0.6vw, 1.5rem);
+		--font-size-step-2: clamp(1.563rem, 1.34rem + 1vw, 2rem);
+		--font-size-step-3: clamp(1.953rem, 1.58rem + 1.6vw, 2.66rem);
+		--font-size-step-4: clamp(2.441rem, 1.86rem + 2.4vw, 3.55rem);
+
+		/* ----------------------------------------------------------------------
+       FLUID SPACING SCALE
+       Also based on clamp() so spacing grows gently with viewport width.
+       ---------------------------------------------------------------------- */
+		--space-2xs: clamp(0.25rem, 0.22rem + 0.12vw, 0.375rem);
+		--space-xs: clamp(0.5rem, 0.44rem + 0.24vw, 0.75rem);
+		--space-s: clamp(0.75rem, 0.67rem + 0.35vw, 1rem);
+		--space-m: clamp(1rem, 0.88rem + 0.56vw, 1.5rem);
+		--space-l: clamp(1.5rem, 1.32rem + 0.85vw, 2.25rem);
+		--space-xl: clamp(2rem, 1.76rem + 1.15vw, 3rem);
+		--space-2xl: clamp(3rem, 2.65rem + 1.7vw, 4.5rem);
+		--space-3xl: clamp(4rem, 3.52rem + 2.3vw, 6rem);
+
+		/* ----------------------------------------------------------------------
+       SIZE / LAYOUT TOKENS
+       ---------------------------------------------------------------------- */
+		--radius-s: 0.5rem;
+		--radius-m: 0.875rem;
+		--radius-l: 1.25rem;
+		--radius-pill: 999px;
+
+		--shadow-soft:
+			0 1px 2px oklch(0 0 0 / 0.14), 0 12px 30px oklch(0 0 0 / 0.18);
+
+		--border-thin: 1px solid var(--color-border);
+		--container-max: 72rem;
+
+		/*
+      A useful token for sticky headers.
+      Navbar component can consume this later.
+    */
+		--header-offset: 5rem;
+	}
+
+	html {
+		color-scheme: dark;
+	}
+
+	body {
+		font-family: var(--font-family-sans);
+		font-size: var(--font-size-step-0);
+		line-height: 1.6;
+		color: var(--color-text);
+		background:
+			radial-gradient(
+				circle at top,
+				oklch(0.26 0.04 245 / 0.55),
+				transparent 35%
+			),
+			linear-gradient(180deg, oklch(0.22 0.03 258), var(--color-bg));
+		text-rendering: optimizeLegibility;
+	}
+
+	h1,
+	h2,
+	h3 {
+		line-height: 1.15;
+		text-wrap: balance;
+		letter-spacing: -0.02em;
+	}
+
+	h1 {
+		font-size: var(--font-size-step-4);
+	}
+
+	h2 {
+		font-size: var(--font-size-step-2);
+	}
+
+	h3 {
+		font-size: var(--font-size-step-1);
+	}
+
+	p,
+	li,
+	blockquote {
+		max-inline-size: 68ch;
+		text-wrap: pretty;
+	}
+
+	a {
+		color: inherit;
+		text-decoration-thickness: 0.08em;
+		text-underline-offset: 0.18em;
+	}
+
+	a:hover {
+		text-decoration-thickness: 0.12em;
+	}
+
+	/*
+    Strong visible focus styles are non-negotiable.
+  */
+	:focus-visible {
+		outline: 3px solid var(--color-focus);
+		outline-offset: 3px;
+		border-radius: var(--radius-s);
+	}
+
+	/*
+    Utility-ish structural classes for foundational layout.
+    These help your HTML stay clean without jumping into utility-CSS chaos.
+  */
+	.container {
+		inline-size: min(100% - (2 * var(--space-m)), var(--container-max));
+		margin-inline: auto;
+	}
+
+	.site-header {
+		position: sticky;
+		inset-block-start: 0;
+		z-index: 1000;
+		padding-block-start: var(--space-s);
+		padding-inline: var(--space-s);
+	}
+
+	.site-footer {
+		padding-block: var(--space-xl);
+		padding-inline: var(--space-m);
+		color: var(--color-text-muted);
+	}
+
+	.page-section {
+		padding-block: var(--space-2xl);
+		padding-inline: var(--space-m);
+	}
+
+	.page-section--todo .container {
+		display: grid;
+		gap: var(--space-s);
+		padding: var(--space-l);
+		border: var(--border-thin);
+		border-radius: var(--radius-l);
+		background: var(--color-bg-elevated);
+		box-shadow: var(--shadow-soft);
+	}
+
+	/*
+    Screen-reader-only utility.
+    Hidden visually but still available to assistive tech.
+  */
+	.visually-hidden {
+		position: absolute;
+		inline-size: 1px;
+		block-size: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		border: 0;
+		white-space: nowrap;
+	}
+
+	/*
+    Skip link stays hidden until focused.
+  */
+	.skip-link {
+		position: absolute;
+		inset-inline-start: var(--space-s);
+		inset-block-start: var(--space-s);
+		z-index: 2000;
+		padding-block: var(--space-xs);
+		padding-inline: var(--space-s);
+		border-radius: var(--radius-pill);
+		background: var(--color-accent);
+		color: var(--color-accent-contrast);
+		text-decoration: none;
+		transform: translateY(-200%);
+	}
+
+	.skip-link:focus-visible {
+		transform: translateY(0);
+	}
+}
+
+/* ==========================================================================
+   THEME LAYER
+   Place future theme overrides here.
+   Keeping a dedicated layer now makes later expansion painless.
+   ========================================================================== */
+@layer theme {
+	/*
+    Example of future theming:
+    [data-theme="light"] { ... }
+    Nothing fancy yet; the structure is what matters.
+  */
+}
