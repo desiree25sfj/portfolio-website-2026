@@ -1,0 +1,580 @@
+/*
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  components/hero/hero.css                                            ║
+  ║  Architectural editorial hero — grid lines, kinetic type, particles  ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+
+  DESIGN DIRECTION
+  ─────────────────
+  Tone: architectural / editorial / technical-luxe.
+  Key visual: an asymmetric grid of hairline rules animate in,
+  behind massive display type that reveals letter-by-letter.
+  A slow ambient particle field adds depth without distraction.
+
+  CSS TECHNIQUES
+  ──────────────
+  • CSS Nesting — all sub-selectors nested under .hero
+  • @keyframes entrance sequences with animation-delay stagger
+  • CSS custom counter + clip-path reveal for the headline
+  • CSS Grid for asymmetric layout (non-uniform columns)
+  • OKLCH color throughout
+  • @starting-style (CSS Transitions Level 2) for entrance transitions
+  • CSS custom properties as animation state flags
+*/
+
+
+/* ─── Keyframes ──────────────────────────────────────────────────────── */
+
+/* Fade + rise — used for most entrance elements */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Clip-path wipe — reveals element from bottom edge upward */
+@keyframes wipeUp {
+  from { clip-path: inset(100% 0 0 0); }
+  to   { clip-path: inset(0% 0 0 0);   }
+}
+
+/* Horizontal rule grows from left */
+@keyframes growRight {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* Vertical rule grows from top */
+@keyframes growDown {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* Subtle float loop for the particle canvas */
+@keyframes ambientFloat {
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-10px); }
+}
+
+/* Counter tick — label numbers */
+@keyframes tickIn {
+  from { opacity: 0; translate: 0 8px; }
+  to   { opacity: 1; translate: 0 0;   }
+}
+
+/* Cursor blink on the scramble text */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-block-size: 100dvb;
+  display: grid;
+  /*
+    Asymmetric grid: narrow gutter column | main content | side column.
+    The side column holds a vertical typographic label and the CTA.
+  */
+  grid-template-columns: var(--space-6) 1fr minmax(auto, 280px);
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+  background-color: var(--color-bg);
+
+  /* ─── Background atmosphere ──────────────────────────────────────
+     Multi-layer radial gradients create an HDR-like glow from
+     two off-center light sources (top-left gold + bottom-right teal).
+  ──────────────────────────────────────────────────────────────── */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        ellipse 70% 55% at 15% 10%,
+        oklch(65% 0.18 72 / 0.10),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 50% 40% at 85% 90%,
+        oklch(60% 0.12 210 / 0.08),
+        transparent 70%
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── Grain overlay ─────────────────────────────────────────────
+     SVG noise texture as data URI — adds tactile depth.
+     Blends with color-dodge at very low opacity.
+  ──────────────────────────────────────────────────────────────── */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── Responsive: collapse to single column on narrow screens ── */
+  @media (max-width: 900px) {
+    grid-template-columns: var(--space-4) 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+
+
+  /* ─────────────────────────────────────────────────────────────────
+     GRID LINES
+     SVG-drawn hairline architectural grid overlaid on the hero.
+     Lines animate in with staggered growRight / growDown sequences.
+  ───────────────────────────────────────────────────────────────── */
+  & .hero__grid-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+
+    /* Each line element — shared base styles */
+    & .line {
+      position: absolute;
+      background-color: oklch(100% 0 0 / 0.06);
+      transform-origin: start;  /* Logical: left in LTR */
+    }
+
+    /* Horizontal lines */
+    & .line--h {
+      block-size: 1px;          /* height */
+      inline-size: 100%;        /* width  */
+      transform-origin: left center;
+      transform: scaleX(0);
+      animation: growRight var(--duration-slow) var(--ease-out-cubic) forwards;
+    }
+
+    /* Vertical lines */
+    & .line--v {
+      block-size: 100%;         /* height */
+      inline-size: 1px;         /* width  */
+      transform-origin: center top;
+      transform: scaleY(0);
+      animation: growDown var(--duration-slow) var(--ease-out-cubic) forwards;
+    }
+
+    /* Position & stagger each line with nth-child delays */
+    & .line:nth-child(1)  { inset-block-start: 15%;  animation-delay: 0.1s; }
+    & .line:nth-child(2)  { inset-block-start: 42%;  animation-delay: 0.25s; }
+    & .line:nth-child(3)  { inset-block-start: 68%;  animation-delay: 0.40s; }
+    & .line:nth-child(4)  { inset-block-start: 85%;  animation-delay: 0.15s; }
+    & .line:nth-child(5)  { inset-inline-start: 22%; animation-delay: 0.20s; }
+    & .line:nth-child(6)  { inset-inline-start: 55%; animation-delay: 0.35s; }
+    & .line:nth-child(7)  { inset-inline-start: 72%; animation-delay: 0.50s; }
+    & .line:nth-child(8)  { inset-inline-start: 88%; animation-delay: 0.10s; }
+
+    /* Accent line — thicker, amber-tinted */
+    & .line--accent {
+      background-color: oklch(65% 0.18 72 / 0.25);
+      block-size: 1px;
+      inline-size: 100%;
+      inset-block-start: 100%;   /* Positioned at bottom of hero */
+      transform-origin: left center;
+      transform: scaleX(0);
+      animation: growRight 0.8s var(--ease-out-cubic) 0.6s forwards;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     PARTICLE CANVAS
+     JS renders ambient floating dots. CSS sizes + fades the canvas.
+  ───────────────────────────────────────────────────────────────── */
+  & .hero__canvas {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeUp 2s var(--ease-out-cubic) 0.8s forwards;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     LEFT GUTTER — index label
+     A vertical typographic element in the narrow first column.
+  ───────────────────────────────────────────────────────────────── */
+  & .hero__gutter-label {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-block-end: var(--space-6);
+
+    writing-mode: vertical-rl;  /* Rotate text 90° */
+    text-orientation: mixed;
+    transform: rotate(180deg);  /* Flip so text reads bottom-to-top */
+
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+
+    opacity: 0;
+    animation: tickIn var(--duration-slow) var(--ease-out-cubic) 1.0s forwards;
+
+    @media (max-width: 600px) {
+      display: none;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     MAIN CONTENT AREA
+  ───────────────────────────────────────────────────────────────── */
+  & .hero__main {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-block: var(--space-8);
+    padding-inline-end: var(--space-6);
+
+    @media (max-width: 900px) {
+      padding-inline-end: var(--space-4);
+    }
+    @media (max-width: 600px) {
+      padding-inline: var(--space-4);
+    }
+  }
+
+  /* ─── Kicker / overline ────────────────────────────────────── */
+  & .hero__kicker {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-block-end: var(--space-5);
+
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+
+    opacity: 0;
+    animation: fadeUp var(--duration-slow) var(--ease-out-cubic) 0.4s forwards;
+
+    /* Small amber rule before the text */
+    &::before {
+      content: "";
+      display: inline-block;
+      inline-size: 2rem;
+      block-size: 1px;
+      background-color: var(--color-cta);
+      flex-shrink: 0;
+    }
+  }
+
+  /* ─── Main heading ─────────────────────────────────────────── */
+  & .hero__title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-tight);
+    line-height: 0.95;            /* Tight — lets lines breathe via margin */
+    color: var(--color-text-primary);
+    margin-block-end: var(--space-6);
+
+    /*
+      Each .hero__title-line is individually animated.
+      The clip-path wipe creates a "rising curtain" reveal.
+    */
+    & .hero__title-line {
+      display: block;
+      overflow: hidden;           /* Clips the wipeUp animation */
+      clip-path: inset(100% 0 0 0);
+      animation: wipeUp 0.7s var(--ease-out-cubic) forwards;
+
+      &:nth-child(1) { animation-delay: 0.55s; }
+      &:nth-child(2) { animation-delay: 0.70s; }
+      &:nth-child(3) { animation-delay: 0.85s; }
+
+      /* Italic accent word */
+      & em {
+        font-style: italic;
+        color: var(--color-cta);
+      }
+
+      /* Outline (stroke) text — large hollow letterforms */
+      & .outline {
+        -webkit-text-stroke: 1px oklch(65% 0.18 72 / 0.5);
+        color: transparent;
+      }
+    }
+  }
+
+  /* ─── Scramble subtitle ────────────────────────────────────── */
+  & .hero__scramble {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-light);
+    color: var(--color-text-secondary);
+    letter-spacing: var(--tracking-normal);
+    margin-block-end: var(--space-7);
+    max-inline-size: 50ch;
+
+    opacity: 0;
+    animation: fadeUp var(--duration-slow) var(--ease-out-cubic) 1.2s forwards;
+
+    /* Blinking cursor appended by JS */
+    & .cursor {
+      display: inline-block;
+      inline-size: 2px;
+      block-size: 1.1em;
+      background-color: var(--color-cta);
+      vertical-align: text-bottom;
+      margin-inline-start: 2px;
+      animation: blink 1s step-end infinite;
+    }
+  }
+
+  /* ─── CTA row ──────────────────────────────────────────────── */
+  & .hero__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+
+    opacity: 0;
+    animation: fadeUp var(--duration-slow) var(--ease-out-cubic) 1.4s forwards;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     SIDE COLUMN — availability badge + scroll indicator
+  ───────────────────────────────────────────────────────────────── */
+  & .hero__side {
+    grid-column: 3;
+    grid-row: 1;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-block: var(--space-8);
+    padding-inline: var(--space-5);
+
+    border-inline-start: 1px solid var(--color-border);
+
+    @media (max-width: 900px) {
+      grid-column: 2;
+      grid-row: 2;
+      flex-direction: row;
+      align-items: center;
+      border-inline-start: none;
+      border-block-start: 1px solid var(--color-border);
+      padding-block: var(--space-5);
+    }
+
+    @media (max-width: 600px) {
+      grid-column: 1;
+      padding-inline: var(--space-4);
+    }
+  }
+
+  /* Availability status pill */
+  & .hero__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-block: var(--space-1);
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-full);
+    border: 1px solid oklch(68% 0.18 145 / 0.30);
+    background-color: oklch(68% 0.18 145 / 0.08);
+
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: oklch(68% 0.18 145);   /* Green */
+
+    opacity: 0;
+    animation: fadeUp var(--duration-slow) var(--ease-out-cubic) 0.9s forwards;
+
+    /* Pulsing green dot */
+    &::before {
+      content: "";
+      display: block;
+      inline-size: 6px;
+      block-size: 6px;
+      border-radius: 50%;
+      background-color: oklch(68% 0.18 145);
+      box-shadow: 0 0 0 0 oklch(68% 0.18 145 / 0.5);
+      animation: pulse 2s ease-out infinite;
+    }
+  }
+
+  /* Side metadata stack */
+  & .hero__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: flex-end;
+
+    opacity: 0;
+    animation: fadeUp var(--duration-slow) var(--ease-out-cubic) 1.1s forwards;
+
+    @media (max-width: 900px) {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  & .hero__meta-item {
+    text-align: end;
+
+    @media (max-width: 900px) {
+      text-align: start;
+    }
+
+    & .label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      letter-spacing: var(--tracking-wider);
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-block-end: 2px;
+    }
+
+    & .value {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     BOTTOM BAR — scroll nudge + project count
+  ───────────────────────────────────────────────────────────────── */
+  & .hero__bottom-bar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--space-4);
+    padding-inline: var(--space-6);
+    border-block-start: 1px solid var(--color-border);
+
+    opacity: 0;
+    animation: fadeUp var(--duration-slow) var(--ease-out-cubic) 1.6s forwards;
+
+    @media (max-width: 600px) {
+      padding-inline: var(--space-4);
+    }
+  }
+
+  & .hero__scroll-nudge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+
+    /* Animated arrow */
+    & .arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      inline-size: 28px;
+      block-size: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border);
+      font-size: 12px;
+      animation: scrollBounce 2s ease-in-out 2s infinite;
+    }
+  }
+
+  & .hero__project-count {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+
+    & span {
+      color: var(--color-cta);
+      font-size: var(--text-sm);
+    }
+  }
+}
+
+
+/* ─── Pulse animation for status dot ──────────────────────────────── */
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0   oklch(68% 0.18 145 / 0.5); }
+  70%  { box-shadow: 0 0 0 6px oklch(68% 0.18 145 / 0.0); }
+  100% { box-shadow: 0 0 0 0   oklch(68% 0.18 145 / 0.0); }
+}
+
+/* ─── Scroll bounce animation ──────────────────────────────────────── */
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0);   }
+  50%       { transform: translateY(4px); }
+}
+
+
+/* ─── Reduced motion ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    & .hero__title-line,
+    & .hero__kicker,
+    & .hero__scramble,
+    & .hero__cta-row,
+    & .hero__status,
+    & .hero__meta,
+    & .hero__bottom-bar,
+    & .hero__gutter-label,
+    & .hero__canvas,
+    & .line {
+      animation: none;
+      opacity: 1;
+      clip-path: none;
+      transform: none;
+    }
+
+    & .hero__status::before {
+      animation: none;
+    }
+
+    & .hero__scramble .cursor {
+      animation: none;
+    }
+  }
+}
