@@ -1,11 +1,167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-</head>
-<body>
-	
-</body>
+  <head>
+    <!--
+      Basic document metadata.
+      Keep this small and honest for now: fast, accessible, easy to extend later.
+    -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Portfolio website for a backend-focused programming student."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <title>Portfolio | Your Name</title>
+
+    <!--
+      Global design system first.
+      Component styles after, so components can consume design tokens cleanly.
+    -->
+    <link rel="stylesheet" href="css/globals.css" />
+    <link rel="stylesheet" href="components/navbar/navbar.css" />
+
+    <!--
+      Modern ESM workflow.
+      main.js can later import component modules such as navbar/navbar.js.
+    -->
+    <script type="module" src="js/main.js"></script>
+  </head>
+
+  <body>
+    <!--
+      Skip link improves keyboard accessibility by letting users bypass repeated navigation.
+    -->
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+      <!--
+        Primary site navigation.
+        aria-label clarifies purpose for assistive tech.
+      -->
+      <nav class="navbar" aria-label="Primary">
+        <div class="navbar__inner">
+          <a class="navbar__brand" href="index.html" aria-label="Go to homepage">
+            <span class="navbar__brand-mark" aria-hidden="true">●</span>
+            <span class="navbar__brand-text">Your Name</span>
+          </a>
+
+          <button
+            class="navbar__toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open navigation menu"
+          >
+            <span class="navbar__toggle-bar" aria-hidden="true"></span>
+            <span class="navbar__toggle-bar" aria-hidden="true"></span>
+            <span class="navbar__toggle-bar" aria-hidden="true"></span>
+          </button>
+
+          <div class="navbar__menu" id="primary-navigation">
+            <ul class="navbar__list" role="list">
+              <li><a class="navbar__link" href="index.html" aria-current="page">Home</a></li>
+              <li><a class="navbar__link" href="about.html">About</a></li>
+              <li><a class="navbar__link" href="projects.html">Projects</a></li>
+            </ul>
+
+            <!--
+              The <search> element is valid semantic HTML for search/filter UI.
+              Since the site only has a navbar so far, this is intentionally left as a TODO.
+              Remove hidden and add a real form when search/filter becomes useful.
+            -->
+            <!--
+            <search class="navbar__search" hidden>
+              <form action="projects.html" method="get" role="search">
+                <label class="visually-hidden" for="site-search">Search projects</label>
+                <input
+                  id="site-search"
+                  name="q"
+                  type="search"
+                  placeholder="Search projects"
+                  autocomplete="off"
+                />
+              </form>
+            </search>
+            -->
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <!--
+        Only the navbar is implemented right now.
+        The remaining sections are intentionally left as TODO wireframe placeholders.
+      -->
+
+      <section class="page-section page-section--todo" aria-labelledby="hero-title">
+        <div class="container">
+          <h1 id="hero-title">TODO: Hero section</h1>
+          <p>
+            Add a short introduction, a backend-focused headline, and primary call-to-action links.
+          </p>
+        </div>
+      </section>
+
+      <section class="page-section page-section--todo" aria-labelledby="about-preview-title">
+        <div class="container">
+          <h2 id="about-preview-title">TODO: About preview</h2>
+          <p>
+            Add a short summary of who you are, what you are learning, and what kind of work you want to do.
+          </p>
+        </div>
+      </section>
+
+      <section class="page-section page-section--todo" aria-labelledby="skills-title">
+        <div class="container">
+          <h2 id="skills-title">TODO: Skills / tech stack</h2>
+          <p>
+            Add a compact overview of your core tools, such as C#, .NET, Git, GitHub, SQL, HTML, CSS, and JavaScript.
+          </p>
+        </div>
+      </section>
+
+      <section class="page-section page-section--todo" aria-labelledby="projects-preview-title">
+        <div class="container">
+          <h2 id="projects-preview-title">TODO: Featured projects</h2>
+          <p>
+            Add 2–3 highlighted projects with a title, short description, tech stack, and GitHub link.
+          </p>
+        </div>
+      </section>
+
+      <section class="page-section page-section--todo" aria-labelledby="contact-title">
+        <div class="container">
+          <h2 id="contact-title">TODO: Contact / links</h2>
+          <p>
+            Add GitHub, CV, email, and optionally LinkedIn or other relevant links.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>&copy; <span id="current-year">2026</span> Your Name. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!--
+      Example image pattern for later sections:
+      Use width/height to reduce layout shift and loading="lazy" for native deferred loading.
+
+      <img
+        src="assets/images/project-preview.webp"
+        alt="Screenshot of project preview"
+        width="1200"
+        height="675"
+        loading="lazy"
+        decoding="async"
+      />
+    -->
+  </body>
 </html>
