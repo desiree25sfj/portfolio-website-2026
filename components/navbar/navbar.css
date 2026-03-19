@@ -1,205 +1,497 @@
-/* ==========================================================================
-   NAVBAR COMPONENT
-   A responsive glassmorphism navbar using:
-   - Native CSS Nesting
-   - OKLCH translucent borders/backgrounds
-   - Logical properties for i18n-friendly layout
-   - Flexbox for compact responsive arrangement
-   ========================================================================== */
+/*
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  components/navbar/navbar.css — Glassmorphism Navigation             ║
+  ║  2026 Web Standards: CSS Nesting, backdrop-filter, logical props      ║
+  ╚══════════════════════════════════════════════════════════════════════╝
 
+  COMPONENT ARCHITECTURE
+  ──────────────────────
+  BEM naming: .navbar (block) → __element → --modifier
+  All selectors use native CSS Nesting (no preprocessor needed).
+  Layout is Flexbox with logical properties throughout.
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  NATIVE CSS NESTING (CSS Nesting Level 1, baseline 2024+)
+  ─────────────────────────────────────────────────────────
+  CSS Nesting lets us write component styles like:
+
+    .navbar {
+      color: red;
+      & .navbar__link { color: blue; }   ← the & is the parent selector
+      &:hover { opacity: 0.9; }          ← pseudo-classes work the same
+      @media (max-width: 768px) { ... }  ← media queries nest too
+    }
+
+  No build step, no Sass, no PostCSS. Pure browser-native.
+  The & symbol always resolves to the selector it is nested inside.
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  GLASSMORPHISM RECIPE
+  ─────────────────────
+  Glass effect = translucent background + backdrop-filter blur + border.
+  The three ingredients must work together:
+    1. background: oklch(…) with alpha < 1  (shows what's behind)
+    2. backdrop-filter: blur(…)              (blurs what's behind)
+    3. border: 1px solid oklch(…/0.15)       (simulates glass edge glint)
+
+  IMPORTANT: backdrop-filter only works when the element has a
+  background-color with alpha < 1. Fully opaque = no glass.
+  Also requires a stacking context — position: fixed/sticky creates one.
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  LOGICAL PROPERTIES USED
+  ────────────────────────
+  padding-inline       = padding-left + padding-right  (→ flips in RTL)
+  padding-block        = padding-top  + padding-bottom
+  margin-inline-start  = margin-left  (→ margin-right in RTL)
+  gap (on flex/grid)   = logical by default in all browsers
+
+  This means the navbar is fully RTL-ready with zero extra code.
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*/
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SITE HEADER — the fixed banner that wraps the navbar
+═══════════════════════════════════════════════════════════════════════ */
+.site-header {
+  /*
+    position: fixed → sticks to viewport top during scroll.
+    z-index: --z-sticky (200) → sits above page content, below modals.
+    inline-size: 100% → full viewport width (logical prop for width).
+  */
+  position: fixed;
+  inset-block-start: 0;   /* top: 0 — logical property                    */
+  inset-inline: 0;         /* left: 0; right: 0 — logical shorthand         */
+  z-index: var(--z-sticky);
+  inline-size: 100%;
+
+  /*
+    JavaScript hooks:
+    [data-scrolled]  → added by navbar.js once user scrolls past threshold
+    [data-hidden]    → added/removed by navbar.js for scroll-up-to-reveal
+    These data attributes trigger CSS transitions below.
+  */
+
+  /* Transition for glass effect appearing on scroll */
+  transition: transform var(--duration-normal) var(--ease-out-cubic);
+
+  /* When JS adds [data-hidden], slide the bar off the top */
+  &[data-hidden] {
+    transform: translateY(-105%);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   NAVBAR — the glass component itself
+═══════════════════════════════════════════════════════════════════════ */
 .navbar {
   /*
-    Glassmorphism needs some transparency plus backdrop-filter.
-    The background is intentionally translucent so the blur can show through.
+    Flexbox layout — main axis is horizontal (row = default).
+    align-items: center — vertically aligns brand, links, toggle.
+    justify-content: space-between — brand on left, links on right.
   */
-  background: oklch(0.28 0.03 255 / 0.48);
-  border: 1px solid oklch(0.78 0.03 255 / 0.18);
-  border-radius: var(--radius-l);
-  box-shadow:
-    0 1px 1px oklch(0 0 0 / 0.08),
-    0 18px 48px oklch(0 0 0 / 0.2);
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
 
   /*
-    CSS Nesting lets us keep related component rules together.
-    This makes the file easier to scan and maintain.
+    padding-inline: logical = padding-left + padding-right.
+    padding-block: logical = padding-top + padding-bottom.
+    These flip correctly in RTL documents.
   */
-  & .navbar__inner {
+  padding-inline: var(--space-5);
+  padding-block: var(--space-3);
+
+  /* ─── Glass Effect ─────────────────────────────────────────
+     Translucent background — alpha is ~0.65 (shows through).
+     OKLCH alpha syntax: oklch(L C H / alpha)
+  ──────────────────────────────────────────────────────────── */
+  background-color: oklch(8% 0.015 250 / 0.65);
+
+  /*
+    backdrop-filter: blur — frosted glass on content behind.
+    saturate() boosts colors behind the glass for extra depth.
+    MUST be paired with a non-opaque background to take effect.
+  */
+  backdrop-filter: var(--blur-md) saturate(160%);
+  -webkit-backdrop-filter: var(--blur-md) saturate(160%); /* Safari prefix */
+
+  /*
+    Glass border — a very subtle, slightly luminous bottom edge.
+    The translucent OKLCH border simulates a glass rim catching light.
+    border-block-end = border-bottom (logical, flips in vertical writing modes).
+  */
+  border-block-end: 1px solid oklch(100% 0 0 / 0.08);
+
+  /* Transition: glass deepens on scroll (JS adds [data-scrolled] to header) */
+  transition:
+    background-color var(--duration-slow)   var(--ease-in-out),
+    backdrop-filter  var(--duration-slow)   var(--ease-in-out),
+    border-color     var(--duration-normal) var(--ease-out-cubic);
+
+  /* ─── Brand / Logo ─────────────────────────────────────────── */
+  & .navbar__brand {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-m);
-
-    min-block-size: 4rem;
-    padding-block: var(--space-s);
-    padding-inline: var(--space-m);
-  }
-
-  & .navbar__brand {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-
-    color: var(--color-text);
+    gap: var(--space-2);
     text-decoration: none;
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    white-space: nowrap;
-  }
+    flex-shrink: 0;  /* Prevent brand from shrinking when links crowd it */
 
-  & .navbar__brand-mark {
-    display: inline-grid;
-    place-items: center;
-    inline-size: 1rem;
-    block-size: 1rem;
-    color: var(--color-accent);
-  }
+    /* Logo initials text */
+    & .navbar__logo-text {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: var(--weight-regular);
+      color: var(--color-text-primary);
+      letter-spacing: var(--tracking-tight);
+      line-height: 1;
+      transition: color var(--duration-fast) var(--ease-out-cubic);
+    }
 
-  & .navbar__brand-text {
-    font-size: var(--font-size-step-0);
-  }
+    &:hover .navbar__logo-text {
+      color: var(--color-cta);
+    }
 
-  & .navbar__toggle {
-    display: none;
-
-    inline-size: 3rem;
-    block-size: 3rem;
-    padding: 0;
-    border: 1px solid oklch(0.78 0.03 255 / 0.18);
-    border-radius: var(--radius-m);
-
-    background: oklch(0.34 0.03 255 / 0.45);
-    color: var(--color-text);
-  }
-
-  & .navbar__toggle:hover {
-    background: oklch(0.38 0.04 255 / 0.58);
-  }
-
-  & .navbar__toggle-bar {
-    display: block;
-    inline-size: 1.125rem;
-    block-size: 2px;
-    margin-inline: auto;
-    border-radius: var(--radius-pill);
-    background: currentColor;
-
-    /*
-      Space the bars with logical margin so directionality stays sane.
-    */
-    & + & {
-      margin-block-start: 0.25rem;
+    &:focus-visible {
+      outline: 2px solid var(--color-cta);
+      outline-offset: 4px;
+      border-radius: var(--radius-sm);
     }
   }
 
-  & .navbar__menu {
+  /* ─── Search Component ──────────────────────────────────────── */
+  & .navbar__search {
+    /*
+      <search> is a block element by default.
+      We make it flex so the input and button sit side by side.
+    */
     display: flex;
     align-items: center;
-    gap: var(--space-m);
+    gap: 0;
+    margin-inline-start: auto;  /* Push search towards center-right */
+
+    /* Hide on narrow viewports — reappear at medium width */
+    @media (max-width: 640px) {
+      display: none;
+    }
+
+    & .navbar__search-input {
+      background-color: oklch(100% 0 0 / 0.05);
+      border: 1px solid oklch(100% 0 0 / 0.12);
+      border-inline-end: none;         /* Merge with button on the right */
+      border-radius: var(--radius-full) 0 0 var(--radius-full);
+      padding-block: var(--space-1);
+      padding-inline: var(--space-3);
+      font-size: var(--text-sm);
+      color: var(--color-text-primary);
+      inline-size: clamp(120px, 15vw, 200px); /* Fluid width */
+      transition:
+        background-color var(--duration-fast) var(--ease-out-cubic),
+        border-color     var(--duration-fast) var(--ease-out-cubic),
+        inline-size      var(--duration-normal) var(--ease-out-cubic);
+
+      /* Remove default search input browser styling */
+      &::-webkit-search-decoration,
+      &::-webkit-search-cancel-button {
+        display: none;
+      }
+
+      /* Expand and highlight on focus */
+      &:focus {
+        outline: none;
+        background-color: oklch(100% 0 0 / 0.10);
+        border-color: oklch(100% 0 0 / 0.25);
+        inline-size: clamp(160px, 20vw, 260px);
+      }
+
+      &::placeholder {
+        color: var(--color-text-muted);
+      }
+    }
+
+    & .navbar__search-btn {
+      background-color: oklch(100% 0 0 / 0.05);
+      border: 1px solid oklch(100% 0 0 / 0.12);
+      border-inline-start: none;
+      border-radius: 0 var(--radius-full) var(--radius-full) 0;
+      padding-block: var(--space-1);
+      padding-inline: var(--space-3);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition:
+        background-color var(--duration-fast) var(--ease-out-cubic),
+        color            var(--duration-fast) var(--ease-out-cubic);
+
+      &:hover {
+        background-color: oklch(100% 0 0 / 0.10);
+        color: var(--color-text-primary);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-cta);
+        outline-offset: 2px;
+      }
+    }
   }
 
+  /* ─── Link List ─────────────────────────────────────────────── */
   & .navbar__list {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: var(--space-1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    /* ── Mobile: hide list (shown via .navbar__toggle) ── */
+    @media (max-width: 767px) {
+      /*
+        Off-canvas menu pattern.
+        The list is absolutely positioned off-screen and revealed
+        when JS adds aria-expanded="true" to the toggle button.
+        We target the expanded state via the toggle's attribute
+        using :has() — CSS Selectors Level 4.
+      */
+      position: fixed;
+      inset-block-start: 0;
+      inset-inline-end: 0;
+      inset-block-end: 0;
+      inline-size: min(280px, 80vw);
+
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: var(--space-2);
+      padding-inline: var(--space-6);
+
+      /* Glass panel for mobile menu */
+      background-color: oklch(8% 0.015 250 / 0.90);
+      backdrop-filter: var(--blur-lg) saturate(180%);
+      -webkit-backdrop-filter: var(--blur-lg) saturate(180%);
+      border-inline-start: 1px solid oklch(100% 0 0 / 0.10);
+
+      /* Slide in from the right */
+      transform: translateX(100%);
+      transition: transform var(--duration-normal) var(--ease-out-cubic);
+      z-index: var(--z-overlay);
+
+      /*
+        :has() — CSS Selectors Level 4 (baseline 2023).
+        "Show the list when the navbar CONTAINS a [aria-expanded=true] toggle."
+        This is pure-CSS state management based on ARIA attributes —
+        the visual and accessible state stay in sync automatically.
+      */
+    }
   }
 
+  /*
+    When toggle has aria-expanded="true", show the mobile menu.
+    :has() checks if .navbar contains an expanded toggle button.
+  */
+  &:has(.navbar__toggle[aria-expanded="true"]) {
+    & .navbar__list {
+      @media (max-width: 767px) {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  /* ─── Individual Links ──────────────────────────────────────── */
   & .navbar__link {
     display: inline-flex;
     align-items: center;
-    min-block-size: 2.75rem;
-    padding-block: var(--space-xs);
-    padding-inline: var(--space-s);
-
-    border-radius: var(--radius-pill);
-    color: var(--color-text-muted);
+    padding-block: var(--space-2);
+    padding-inline: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
     text-decoration: none;
+    border-radius: var(--radius-md);
+    position: relative;
+
     transition:
-      background-color 180ms ease,
-      color 180ms ease,
-      transform 180ms ease;
-  }
+      color var(--duration-fast) var(--ease-out-cubic),
+      background-color var(--duration-fast) var(--ease-out-cubic);
 
-  & .navbar__link:hover,
-  & .navbar__link:focus-visible {
-    color: var(--color-text);
-    background: oklch(0.42 0.03 255 / 0.35);
-    text-decoration: none;
-  }
-
-  & .navbar__link[aria-current="page"] {
-    color: var(--color-text);
-    background: oklch(0.72 0.16 240 / 0.16);
-    border: 1px solid oklch(0.72 0.16 240 / 0.26);
-  }
-
-  /*
-    Optional future search box styling.
-    Kept here because the <search> element belongs to the navbar component.
-  */
-  & .navbar__search {
-    display: flex;
-    align-items: center;
-
-    & input[type="search"] {
-      inline-size: min(18rem, 100%);
-      min-block-size: 2.75rem;
-      padding-block: var(--space-xs);
-      padding-inline: var(--space-s);
-
-      border: 1px solid oklch(0.78 0.03 255 / 0.16);
-      border-radius: var(--radius-pill);
-      background: oklch(0.34 0.03 255 / 0.42);
-      color: var(--color-text);
+    /*
+      Animated underline — pseudo-element that scales in on hover.
+      Using scaleX() is GPU-composited (no layout reflow).
+    */
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block-end: 4px;      /* bottom: 4px — logical              */
+      inset-inline: var(--space-3); /* left/right padding offset — logical */
+      block-size: 1px;            /* height: 1px — logical              */
+      background-color: var(--color-cta);
+      transform: scaleX(0);
+      transform-origin: inline-end;  /* scale from right → left */
+      transition: transform var(--duration-normal) var(--ease-out-cubic);
     }
 
-    & input[type="search"]::placeholder {
-      color: var(--color-text-muted);
-    }
-  }
+    &:hover {
+      color: var(--color-text-primary);
+      background-color: oklch(100% 0 0 / 0.04);
 
-  /*
-    Small-screen behavior:
-    - show menu toggle
-    - stack the menu vertically
-    - hide menu until JS toggles it open
-  */
-  @media (width <= 48rem) {
-    & .navbar__inner {
-      flex-wrap: wrap;
+      &::after {
+        transform: scaleX(1);
+        transform-origin: inline-start;  /* expand left → right */
+      }
     }
 
-    & .navbar__toggle {
-      display: inline-grid;
-      place-content: center;
-      margin-inline-start: auto;
+    &:focus-visible {
+      outline: 2px solid var(--color-cta);
+      outline-offset: 2px;
+      color: var(--color-text-primary);
     }
 
-    & .navbar__menu {
-      display: none;
+    /*
+      aria-current="page" is set by JavaScript.
+      Styling on ARIA attribute = accessible AND visual state stay in sync.
+    */
+    &[aria-current="page"] {
+      color: var(--color-cta);
+      font-weight: var(--weight-medium);
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+
+    /* Mobile link sizing */
+    @media (max-width: 767px) {
+      font-size: var(--text-base);
+      padding-block: var(--space-3);
+      padding-inline: 0;
       inline-size: 100%;
-      flex-direction: column;
-      align-items: stretch;
-      padding-block-start: var(--space-xs);
-    }
+      border-radius: 0;
+      border-block-end: 1px solid oklch(100% 0 0 / 0.06);
 
-    & .navbar__menu.is-open {
+      &::after {
+        display: none; /* Use border instead on mobile */
+      }
+    }
+  }
+
+  /* ─── Hamburger Toggle ──────────────────────────────────────── */
+  & .navbar__toggle {
+    display: none;  /* Hidden on desktop */
+
+    @media (max-width: 767px) {
       display: flex;
-    }
-
-    & .navbar__list {
       flex-direction: column;
-      align-items: stretch;
-    }
-
-    & .navbar__link {
       justify-content: center;
-      inline-size: 100%;
+      align-items: center;
+      gap: 5px;
+      inline-size: 40px;
+      block-size: 40px;
+      background: transparent;
+      border: 1px solid oklch(100% 0 0 / 0.12);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      z-index: calc(var(--z-overlay) + 1); /* Above the mobile menu panel */
+      flex-shrink: 0;
+
+      &:focus-visible {
+        outline: 2px solid var(--color-cta);
+        outline-offset: 2px;
+      }
     }
 
-    & .navbar__search input[type="search"] {
-      inline-size: 100%;
+    & .navbar__toggle-bar {
+      display: block;
+      inline-size: 18px;
+      block-size: 1.5px;
+      background-color: var(--color-text-primary);
+      border-radius: var(--radius-full);
+      transition:
+        transform  var(--duration-normal) var(--ease-in-out),
+        opacity    var(--duration-fast)   var(--ease-out-cubic);
+      transform-origin: center;
     }
+
+    /*
+      Animate bars to × when open.
+      Targets each nth-child bar individually within the toggle.
+    */
+    &[aria-expanded="true"] {
+      & .navbar__toggle-bar:nth-child(1) {
+        transform: translateY(6.5px) rotate(45deg);
+      }
+      & .navbar__toggle-bar:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      & .navbar__toggle-bar:nth-child(3) {
+        transform: translateY(-6.5px) rotate(-45deg);
+      }
+    }
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCROLLED STATE
+   When JS adds [data-scrolled] to .site-header, deepen the glass.
+   Note: this is on .site-header (parent), not .navbar.
+═══════════════════════════════════════════════════════════════════════ */
+.site-header[data-scrolled] {
+  & .navbar {
+    background-color: oklch(6% 0.015 250 / 0.80);  /* Darker glass */
+    border-block-end-color: oklch(100% 0 0 / 0.12); /* Brighter rim */
+    padding-block: var(--space-2);  /* Slightly compressed on scroll */
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MOBILE OVERLAY BACKDROP
+   A semi-transparent scrim that appears behind the open mobile menu.
+   Created with a pseudo-element on .navbar so we stay in the component.
+═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .navbar {
+    &::before {
+      content: "";
+      position: fixed;
+      inset: 0;  /* Shorthand for top/right/bottom/left = 0 */
+      background-color: oklch(0% 0 0 / 0);
+      z-index: calc(var(--z-overlay) - 1);
+      pointer-events: none;
+      transition: background-color var(--duration-normal) var(--ease-in-out);
+    }
+
+    /*
+      When menu is open: show the backdrop.
+      :has() lets us style the ::before based on toggle state.
+    */
+    &:has(.navbar__toggle[aria-expanded="true"])::before {
+      background-color: oklch(0% 0 0 / 0.5);
+      pointer-events: auto;
+    }
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   REDUCED MOTION OVERRIDES
+   Respect the user's OS preference — collapse all transitions.
+═══════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .navbar,
+  .navbar__link,
+  .navbar__link::after,
+  .navbar__toggle-bar,
+  .navbar__list,
+  .navbar__search-input {
+    transition: none;
+    animation: none;
   }
 }
