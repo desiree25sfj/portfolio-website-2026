@@ -1,0 +1,205 @@
+/* ==========================================================================
+   NAVBAR COMPONENT
+   A responsive glassmorphism navbar using:
+   - Native CSS Nesting
+   - OKLCH translucent borders/backgrounds
+   - Logical properties for i18n-friendly layout
+   - Flexbox for compact responsive arrangement
+   ========================================================================== */
+
+.navbar {
+  /*
+    Glassmorphism needs some transparency plus backdrop-filter.
+    The background is intentionally translucent so the blur can show through.
+  */
+  background: oklch(0.28 0.03 255 / 0.48);
+  border: 1px solid oklch(0.78 0.03 255 / 0.18);
+  border-radius: var(--radius-l);
+  box-shadow:
+    0 1px 1px oklch(0 0 0 / 0.08),
+    0 18px 48px oklch(0 0 0 / 0.2);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+
+  /*
+    CSS Nesting lets us keep related component rules together.
+    This makes the file easier to scan and maintain.
+  */
+  & .navbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+
+    min-block-size: 4rem;
+    padding-block: var(--space-s);
+    padding-inline: var(--space-m);
+  }
+
+  & .navbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+
+  & .navbar__brand-mark {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1rem;
+    block-size: 1rem;
+    color: var(--color-accent);
+  }
+
+  & .navbar__brand-text {
+    font-size: var(--font-size-step-0);
+  }
+
+  & .navbar__toggle {
+    display: none;
+
+    inline-size: 3rem;
+    block-size: 3rem;
+    padding: 0;
+    border: 1px solid oklch(0.78 0.03 255 / 0.18);
+    border-radius: var(--radius-m);
+
+    background: oklch(0.34 0.03 255 / 0.45);
+    color: var(--color-text);
+  }
+
+  & .navbar__toggle:hover {
+    background: oklch(0.38 0.04 255 / 0.58);
+  }
+
+  & .navbar__toggle-bar {
+    display: block;
+    inline-size: 1.125rem;
+    block-size: 2px;
+    margin-inline: auto;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+
+    /*
+      Space the bars with logical margin so directionality stays sane.
+    */
+    & + & {
+      margin-block-start: 0.25rem;
+    }
+  }
+
+  & .navbar__menu {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+  }
+
+  & .navbar__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  & .navbar__link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    padding-block: var(--space-xs);
+    padding-inline: var(--space-s);
+
+    border-radius: var(--radius-pill);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease,
+      transform 180ms ease;
+  }
+
+  & .navbar__link:hover,
+  & .navbar__link:focus-visible {
+    color: var(--color-text);
+    background: oklch(0.42 0.03 255 / 0.35);
+    text-decoration: none;
+  }
+
+  & .navbar__link[aria-current="page"] {
+    color: var(--color-text);
+    background: oklch(0.72 0.16 240 / 0.16);
+    border: 1px solid oklch(0.72 0.16 240 / 0.26);
+  }
+
+  /*
+    Optional future search box styling.
+    Kept here because the <search> element belongs to the navbar component.
+  */
+  & .navbar__search {
+    display: flex;
+    align-items: center;
+
+    & input[type="search"] {
+      inline-size: min(18rem, 100%);
+      min-block-size: 2.75rem;
+      padding-block: var(--space-xs);
+      padding-inline: var(--space-s);
+
+      border: 1px solid oklch(0.78 0.03 255 / 0.16);
+      border-radius: var(--radius-pill);
+      background: oklch(0.34 0.03 255 / 0.42);
+      color: var(--color-text);
+    }
+
+    & input[type="search"]::placeholder {
+      color: var(--color-text-muted);
+    }
+  }
+
+  /*
+    Small-screen behavior:
+    - show menu toggle
+    - stack the menu vertically
+    - hide menu until JS toggles it open
+  */
+  @media (width <= 48rem) {
+    & .navbar__inner {
+      flex-wrap: wrap;
+    }
+
+    & .navbar__toggle {
+      display: inline-grid;
+      place-content: center;
+      margin-inline-start: auto;
+    }
+
+    & .navbar__menu {
+      display: none;
+      inline-size: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      padding-block-start: var(--space-xs);
+    }
+
+    & .navbar__menu.is-open {
+      display: flex;
+    }
+
+    & .navbar__list {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    & .navbar__link {
+      justify-content: center;
+      inline-size: 100%;
+    }
+
+    & .navbar__search input[type="search"] {
+      inline-size: 100%;
+    }
+  }
+}
