@@ -106,10 +106,10 @@
   padding-block: var(--space-3);
 
   /* ─── Glass Effect ─────────────────────────────────────────
-     Translucent background — alpha is ~0.65 (shows through).
-     OKLCH alpha syntax: oklch(L C H / alpha)
+     Translucent version of the bg — frosted glass on slate.
+     oklch(22%) bg → glass at oklch(26%) with alpha 0.75
   ──────────────────────────────────────────────────────────── */
-  background-color: oklch(8% 0.015 250 / 0.65);
+  background-color: oklch(26% 0.018 250 / 0.75);
 
   /*
     backdrop-filter: blur — frosted glass on content behind.
@@ -124,7 +124,7 @@
     The translucent OKLCH border simulates a glass rim catching light.
     border-block-end = border-bottom (logical, flips in vertical writing modes).
   */
-  border-block-end: 1px solid oklch(100% 0 0 / 0.08);
+  border-block-end: 1px solid oklch(50% 0.015 250 / 0.25);
 
   /* Transition: glass deepens on scroll (JS adds [data-scrolled] to header) */
   transition:
@@ -179,8 +179,8 @@
     }
 
     & .navbar__search-input {
-      background-color: oklch(100% 0 0 / 0.05);
-      border: 1px solid oklch(100% 0 0 / 0.12);
+      background-color: oklch(100% 0 0 / 0.06);
+      border: 1px solid oklch(100% 0 0 / 0.18);
       border-inline-end: none;         /* Merge with button on the right */
       border-radius: var(--radius-full) 0 0 var(--radius-full);
       padding-block: var(--space-1);
@@ -203,7 +203,7 @@
       &:focus {
         outline: none;
         background-color: oklch(100% 0 0 / 0.10);
-        border-color: oklch(100% 0 0 / 0.25);
+        border-color: oklch(100% 0 0 / 0.35);
         inline-size: clamp(160px, 20vw, 260px);
       }
 
@@ -213,8 +213,8 @@
     }
 
     & .navbar__search-btn {
-      background-color: oklch(100% 0 0 / 0.05);
-      border: 1px solid oklch(100% 0 0 / 0.12);
+      background-color: oklch(100% 0 0 / 0.06);
+      border: 1px solid oklch(100% 0 0 / 0.18);
       border-inline-start: none;
       border-radius: 0 var(--radius-full) var(--radius-full) 0;
       padding-block: var(--space-1);
@@ -267,11 +267,11 @@
       gap: var(--space-2);
       padding-inline: var(--space-6);
 
-      /* Glass panel for mobile menu */
-      background-color: oklch(8% 0.015 250 / 0.90);
+      /* Glass panel for mobile menu — matches the lifted dark bg */
+      background-color: oklch(24% 0.018 250 / 0.94);
       backdrop-filter: var(--blur-lg) saturate(180%);
       -webkit-backdrop-filter: var(--blur-lg) saturate(180%);
-      border-inline-start: 1px solid oklch(100% 0 0 / 0.10);
+      border-inline-start: 1px solid oklch(50% 0.015 250 / 0.25);
 
       /* Slide in from the right */
       transform: translateX(100%);
@@ -337,7 +337,7 @@
 
     &:hover {
       color: var(--color-text-primary);
-      background-color: oklch(100% 0 0 / 0.04);
+      background-color: oklch(100% 0 0 / 0.06);
 
       &::after {
         transform: scaleX(1);
@@ -371,7 +371,7 @@
       padding-inline: 0;
       inline-size: 100%;
       border-radius: 0;
-      border-block-end: 1px solid oklch(100% 0 0 / 0.06);
+      border-block-end: 1px solid oklch(50% 0.015 250 / 0.20);
 
       &::after {
         display: none; /* Use border instead on mobile */
@@ -392,7 +392,7 @@
       inline-size: 40px;
       block-size: 40px;
       background: transparent;
-      border: 1px solid oklch(100% 0 0 / 0.12);
+      border: 1px solid oklch(50% 0.015 250 / 0.35);
       border-radius: var(--radius-md);
       cursor: pointer;
       z-index: calc(var(--z-overlay) + 1); /* Above the mobile menu panel */
@@ -443,8 +443,8 @@
 ═══════════════════════════════════════════════════════════════════════ */
 .site-header[data-scrolled] {
   & .navbar {
-    background-color: oklch(6% 0.015 250 / 0.80);  /* Darker glass */
-    border-block-end-color: oklch(100% 0 0 / 0.12); /* Brighter rim */
+    background-color: oklch(24% 0.018 250 / 0.90);  /* Denser slate glass on scroll */
+    border-block-end-color: oklch(55% 0.015 250 / 0.30);
     padding-block: var(--space-2);  /* Slightly compressed on scroll */
   }
 }

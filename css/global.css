@@ -85,16 +85,21 @@
     --color-neutral-900: oklch(15%  0.020 250);  /* Near-black       */
     --color-neutral-950: oklch(8%   0.015 250);  /* True dark bg     */
 
-    /* Semantic role aliases — swap these for theming without touching components */
-    --color-bg:          var(--color-neutral-950);
-    --color-surface:     var(--color-neutral-900);
-    --color-surface-raised: oklch(18% 0.020 250);
-    --color-border:      oklch(30% 0.02 250 / 0.6);
-    --color-text-primary:   var(--color-neutral-50);
-    --color-text-secondary: var(--color-neutral-400);
-    --color-text-muted:     var(--color-neutral-600);
-    --color-cta:         var(--color-accent-500);
-    --color-cta-hover:   var(--color-accent-300);
+    /* ─── Semantic role aliases — DARK by default ───────────────────
+       Background lifted from oklch(8%) → oklch(22%) — a deep slate
+       that still reads unmistakably dark but breathes much more.
+       Surfaces and borders scale proportionally above it.
+       Text values raised so contrast stays WCAG AA compliant.
+    ──────────────────────────────────────────────────────────────── */
+    --color-bg:              oklch(22% 0.018 250);   /* Deep slate — the key lift */
+    --color-surface:         oklch(27% 0.018 250);   /* Cards, panels             */
+    --color-surface-raised:  oklch(32% 0.016 250);   /* Tooltips, dropdowns       */
+    --color-border:          oklch(42% 0.015 250 / 0.50);
+    --color-text-primary:    oklch(96% 0.005 250);   /* Near-white                */
+    --color-text-secondary:  oklch(75% 0.010 250);   /* Readable mid-tone         */
+    --color-text-muted:      oklch(58% 0.012 250);   /* Subdued labels            */
+    --color-cta:             var(--color-accent-500); /* Amber — vivid on slate    */
+    --color-cta-hover:       var(--color-accent-300); /* Lighter amber on hover    */
 
     /* Semantic: feedback states */
     --color-success: oklch(68% 0.18 145);  /* Green */
@@ -169,11 +174,11 @@
     --border-style: solid;
 
     /* ─── SHADOWS ───────────────────────────────────────────────── */
-    /* OKLCH-based shadows preserve hue saturation — no muddy grey */
-    --shadow-sm:  0 1px 3px  oklch(5% 0.02 250 / 0.40);
-    --shadow-md:  0 4px 12px oklch(5% 0.02 250 / 0.50);
-    --shadow-lg:  0 12px 40px oklch(5% 0.02 250 / 0.60);
-    --shadow-glow: 0 0 30px oklch(65% 0.20 68 / 0.25);  /* Accent glow */
+    /* Shadows on a lifted dark bg — moderate alpha, dark base    */
+    --shadow-sm:  0 1px 3px  oklch(10% 0.02 250 / 0.35);
+    --shadow-md:  0 4px 12px oklch(10% 0.02 250 / 0.40);
+    --shadow-lg:  0 12px 40px oklch(10% 0.02 250 / 0.50);
+    --shadow-glow: 0 0 30px oklch(65% 0.20 68 / 0.30);  /* Accent glow */
 
     /* ─── MOTION ────────────────────────────────────────────────── */
     --duration-fast:   150ms;
@@ -200,9 +205,7 @@
   }
 
   /*
-    Light theme override — swap semantic token values.
-    Applied when user OS prefers light mode.
-    Uses prefers-color-scheme for automatic switching.
+    Light theme override — swap semantic token values when OS prefers light.
   */
   @media (prefers-color-scheme: light) {
     :root {
@@ -215,10 +218,14 @@
       --color-text-muted:      var(--color-neutral-400);
       --color-cta:             var(--color-accent-700);
       --color-cta-hover:       var(--color-accent-900);
+      --shadow-sm:   0 1px 3px  oklch(30% 0.02 250 / 0.10);
+      --shadow-md:   0 4px 12px oklch(30% 0.02 250 / 0.12);
+      --shadow-lg:   0 12px 40px oklch(30% 0.02 250 / 0.15);
+      --shadow-glow: 0 0 30px oklch(45% 0.18 65 / 0.20);
     }
   }
 
-  /* Manual theme toggle hook — add data-theme="light" to <html> */
+  /* Manual light theme hook — add data-theme="light" to <html> */
   [data-theme="light"] {
     --color-bg:              var(--color-neutral-50);
     --color-surface:         var(--color-neutral-0);
@@ -229,6 +236,10 @@
     --color-text-muted:      var(--color-neutral-400);
     --color-cta:             var(--color-accent-700);
     --color-cta-hover:       var(--color-accent-900);
+    --shadow-sm:   0 1px 3px  oklch(30% 0.02 250 / 0.10);
+    --shadow-md:   0 4px 12px oklch(30% 0.02 250 / 0.12);
+    --shadow-lg:   0 12px 40px oklch(30% 0.02 250 / 0.15);
+    --shadow-glow: 0 0 30px oklch(45% 0.18 65 / 0.20);
   }
 }
 

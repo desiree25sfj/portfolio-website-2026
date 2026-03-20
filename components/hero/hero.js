@@ -147,9 +147,8 @@ function initParticles() {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
 
-      // OKLCH amber tint on particles — matches the accent palette
-      // Canvas doesn't support oklch natively, so we use equivalent P3 hex
-      ctx.fillStyle = `rgba(220, 170, 90, ${alpha})`;
+      // Amber particles — brighter alpha on the lifted oklch(22%) bg
+      ctx.fillStyle = `rgba(220, 170, 90, ${alpha * 1.6})`;
       ctx.fill();
 
       // Drift

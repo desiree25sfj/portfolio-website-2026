@@ -63,8 +63,11 @@
     <!-- 2. Navbar component — scoped to .navbar -->
     <link rel="stylesheet" href="components/navbar/navbar.css" />
 
+    <!-- 3. Hero component -->
+    <link rel="stylesheet" href="components/hero/hero.css" />
+
     <!--
-      3. Page-specific stylesheets would follow here, e.g.:
+      4. Page-specific stylesheets would follow here, e.g.:
       <link rel="stylesheet" href="css/pages/home.css" />
     -->
 
@@ -174,40 +177,135 @@
         heading — this creates an accessible landmark with a human-readable
         name that screen readers announce when jumping between regions.
       -->
+      <!--
+        ─────────────────────────────────────────────────────────────────
+        HERO SECTION
+        ─────────────────────────────────────────────────────────────────
+        Architectural editorial hero.
+        Structure:
+          .hero__grid-lines  — animated hairline grid (decorative, aria-hidden)
+          .hero__canvas      — JS ambient particle field
+          .hero__gutter-label — vertical index label in left gutter column
+          .hero__main        — headline + subtitle + CTAs
+          .hero__side        — availability status + metadata
+          .hero__bottom-bar  — scroll nudge + project count
+      -->
       <section class="hero" aria-labelledby="hero-heading">
-        <div class="hero__inner container">
-          <h1 id="hero-heading" class="hero__title">
-            <!-- TODO: your headline -->
-            Crafting digital<br />
-            <em>experiences</em>.
-          </h1>
-          <p class="hero__sub">
-            <!-- TODO: your elevator pitch -->
-            Designer &amp; front-end engineer. Based in [City].
-            Available for select projects in 2026.
-          </p>
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="projects.html">View work</a>
-            <a class="btn btn--ghost" href="about.html">About me</a>
-          </div>
+
+        <!-- ── Decorative grid lines ── -->
+        <div class="hero__grid-lines" aria-hidden="true">
+          <!-- Horizontal lines -->
+          <div class="line line--h"></div>
+          <div class="line line--h"></div>
+          <div class="line line--h"></div>
+          <div class="line line--h"></div>
+          <!-- Vertical lines -->
+          <div class="line line--v"></div>
+          <div class="line line--v"></div>
+          <div class="line line--v"></div>
+          <div class="line line--v"></div>
+          <!-- Accent bottom rule -->
+          <div class="line line--accent"></div>
         </div>
 
-        <!--
-          Hero image with:
-          • fetchpriority="high" — tells the browser this is the LCP image
-          • width/height — prevents layout shift (CLS)
-          • alt="" only if purely decorative; write real alt text for content images
-        -->
-        <!--
-        <img
-          class="hero__image"
-          src="assets/images/hero.webp"
-          alt="[Descriptive alt text]"
-          width="1200"
-          height="800"
-          fetchpriority="high"
-        />
-        -->
+        <!-- ── Particle canvas — populated by hero.js ── -->
+        <canvas
+          class="hero__canvas"
+          aria-hidden="true"
+          role="presentation"
+        ></canvas>
+
+        <!-- ── Left gutter: vertical index label ── -->
+        <span class="hero__gutter-label" aria-hidden="true">
+          Portfolio — 2026
+        </span>
+
+        <!-- ── Main content column ── -->
+        <div class="hero__main">
+
+          <!-- Kicker / overline -->
+          <p class="hero__kicker" aria-label="Role">
+            Designer &amp; Front-End Engineer
+          </p>
+
+          <!--
+            Headline: each line is individually animated via .hero__title-line.
+            The clip-path wipe reveal is handled by CSS @keyframes wipeUp.
+            TODO: replace with your name / tagline.
+          -->
+          <h1 id="hero-heading" class="hero__title">
+            <span class="hero__title-line">Crafting</span>
+            <span class="hero__title-line"><em>digital</em></span>
+            <span class="hero__title-line">
+              <!-- .outline = CSS -webkit-text-stroke hollow letterforms -->
+              <span class="outline">experiences</span>.
+            </span>
+          </h1>
+
+          <!--
+            Scramble subtitle:
+            data-final = the real text revealed after the scramble.
+            hero.js reads this attribute and runs the effect.
+            aria-label on the wrapper holds the accessible name
+            so screen readers get the final text immediately.
+            TODO: update with your elevator pitch.
+          -->
+          <p class="hero__scramble" aria-label="Designer and front-end engineer. Based in your city. Available for select projects in 2026.">
+            <span
+              class="hero__scramble-text"
+              data-final="Designer. Engineer. Based in [City]. Available 2026."
+            >
+              Designer. Engineer. Based in [City]. Available 2026.
+            </span>
+          </p>
+
+          <!-- CTAs -->
+          <div class="hero__cta-row">
+            <a class="btn btn--primary" href="projects.html">View work</a>
+            <a class="btn btn--ghost"   href="about.html">About me</a>
+          </div>
+
+        </div><!-- /.hero__main -->
+
+        <!-- ── Right side column ── -->
+        <aside class="hero__side" aria-label="Availability and details">
+
+          <!-- Pulsing green availability pill -->
+          <div class="hero__status" role="status" aria-live="polite">
+            Available for work
+          </div>
+
+          <!-- Metadata stack — TODO: update values -->
+          <dl class="hero__meta">
+            <div class="hero__meta-item">
+              <dt class="label">Based in</dt>
+              <dd class="value">[Your City]</dd>
+            </div>
+            <div class="hero__meta-item">
+              <dt class="label">Projects</dt>
+              <!-- TODO: update count -->
+              <dd class="value">24 shipped</dd>
+            </div>
+            <div class="hero__meta-item">
+              <dt class="label">Experience</dt>
+              <!-- TODO: update years -->
+              <dd class="value">6+ months</dd>
+            </div>
+          </dl>
+
+        </aside><!-- /.hero__side -->
+
+        <!-- ── Bottom bar ── -->
+        <div class="hero__bottom-bar" aria-hidden="true">
+          <span class="hero__scroll-nudge">
+            <span class="arrow">↓</span>
+            Scroll to explore
+          </span>
+          <span class="hero__project-count">
+            Selected work — <span>06</span> case studies
+          </span>
+        </div>
+
       </section>
 
 
