@@ -1,0 +1,230 @@
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.8fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+  min-height: calc(92vh - 72px);
+  padding-block: clamp(3.5rem, 7vw, 6rem);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: var(--accent-2);
+  font-family: var(--font-code);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-text {
+  max-width: 62ch;
+  margin-block: 1.5rem 0;
+  font-size: 1.12rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.hero-visual {
+  position: relative;
+}
+
+.hero-visual::before {
+  content: "";
+  position: absolute;
+  inset: -1rem;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 8px);
+  transform: rotate(-2deg);
+}
+
+.terminal {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #0b1117;
+  box-shadow: var(--shadow);
+}
+
+.terminal-bar {
+  display: flex;
+  gap: 0.45rem;
+  padding: 0.9rem;
+  border-bottom: 1px solid var(--line);
+  background: #131f2a;
+}
+
+.terminal-bar span {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+.terminal-bar span:nth-child(2) {
+  background: var(--accent);
+}
+
+.terminal-bar span:nth-child(3) {
+  background: var(--accent-2);
+}
+
+.contact-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  margin-block: clamp(4rem, 8vw, 7rem);
+}
+
+.timeline {
+  display: grid;
+  gap: 1rem;
+}
+
+.timeline article {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.timeline span,
+.case-top span {
+  color: var(--accent-2);
+  font-family: var(--font-code);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.timeline p {
+  margin-bottom: 0;
+}
+
+.tetris-showcase {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+  padding: clamp(1rem, 4vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(23, 35, 48, 0.74);
+}
+
+.tetris-copy h2 {
+  max-width: 20ch;
+}
+
+.tetris-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.tetris-controls span {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.05);
+  font-family: var(--font-code);
+  font-size: 0.82rem;
+}
+
+.tetris-game {
+  display: grid;
+  gap: 0.85rem;
+  justify-items: center;
+}
+
+.tetris-game__header {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.75rem;
+  width: 100%;
+  align-items: center;
+}
+
+.tetris-game__header div {
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tetris-game__header span,
+.tetris-game__header strong {
+  display: block;
+}
+
+.tetris-game__header span {
+  color: var(--soft);
+  font-family: var(--font-code);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tetris-game__header strong {
+  margin-top: 0.2rem;
+  font-size: 1.15rem;
+}
+
+.tetris-start {
+  min-height: 100%;
+  white-space: nowrap;
+}
+
+#tetris-board {
+  width: min(100%, 240px);
+  aspect-ratio: 1 / 2;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #0b1117;
+  box-shadow: var(--shadow);
+  image-rendering: pixelated;
+}
+
+.tetris-status {
+  width: 100%;
+  margin: 0;
+  color: var(--soft);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@media (max-width: 840px) {
+  .hero,
+  .tetris-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+  }
+
+  .timeline article {
+    grid-template-columns: 1fr;
+  }
+
+  .tetris-copy h2 {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero-actions {
+    width: 100%;
+  }
+}

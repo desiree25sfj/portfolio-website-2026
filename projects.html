@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Projects by Desiree, a junior backend developer learning C#, MVC, LINQ, REST APIs, and practical software development."
+    />
+    <title>Projects | Desiree</title>
+    <link rel="stylesheet" href="css/global.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <nav class="nav container" aria-label="Main navigation">
+        <a class="brand" href="index.html" aria-label="Home">
+          <span class="brand-mark">D</span>
+          <span>Desiree</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span class="sr-only">Menu</span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul class="nav-links" id="nav-links" role="list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="projects.html" aria-current="page">Projects</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="https://github.com/desiree25sfj" target="_blank" rel="noreferrer">GitHub</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main" class="page container">
+      <section class="page-hero">
+        <p class="eyebrow">Projects</p>
+        <h1>Three C# projects that show where I am heading.</h1>
+        <p>
+          These C# projects are not pretending to be enterprise systems. They are better than that for a junior portfolio:
+          they show language fundamentals, backend thinking, and the ability to build through confusion instead of stopping
+          at the first weird error.
+        </p>
+      </section>
+
+      <section class="tetris-showcase" aria-labelledby="tetris-demo-heading">
+        <div class="tetris-copy">
+          <p class="eyebrow">Project spotlight</p>
+          <h2 id="tetris-demo-heading">A playable web adaptation of my C# WinForms Tetris project.</h2>
+          <p>
+            The original project is a C# Windows Forms app. This browser version mirrors its core behavior for the
+            portfolio: seven tetrominoes, arrow-key movement, collision detection, line clearing, fixed fall speed,
+            and the same line-clear scoring. It also adds a small wall-kick improvement so the demo feels smoother.
+          </p>
+          <div class="tetris-controls" aria-label="Game controls">
+            <span>Move: Arrow keys</span>
+            <span>Rotate: Up</span>
+            <span>Accelerate: Down</span>
+            <span>Scoring: 100/300/500/800</span>
+          </div>
+        </div>
+
+        <div class="tetris-game" aria-label="Playable falling blocks demo">
+          <div class="tetris-game__header">
+            <div>
+              <span>Score</span>
+              <strong id="tetris-score">0</strong>
+            </div>
+            <div>
+              <span>Lines</span>
+              <strong id="tetris-lines">0</strong>
+            </div>
+            <button class="button secondary tetris-start" type="button" id="tetris-start">Start</button>
+          </div>
+          <canvas id="tetris-board" width="240" height="480" aria-label="Tetris game board"></canvas>
+          <p class="tetris-status" id="tetris-status">Press Start, then use the arrow keys to play.</p>
+        </div>
+      </section>
+
+      <section class="case-grid" aria-label="Project case studies">
+        <article class="case-card" id="tetris">
+          <div class="case-top">
+            <span>C#</span>
+            <span>Game logic</span>
+            <span>Problem solving</span>
+          </div>
+          <h2>Tetris</h2>
+          <p>
+            A strong C# showcase project because it forces real programming decisions: game state, movement, collision,
+            scoring, timing, and rules that have to keep working together.
+          </p>
+          <ul>
+            <li>Good evidence of C# logic, debugging, and breaking a bigger problem into smaller pieces.</li>
+            <li>Worth highlighting because employers understand the rules immediately and can judge the implementation.</li>
+          </ul>
+          <a href="https://github.com/desiree25sfj/tetris-winforms" target="_blank" rel="noreferrer">View on GitHub</a>
+        </article>
+
+        <article class="case-card" id="mvc-linq">
+          <div class="case-top">
+            <span>C#/.NET</span>
+            <span>MVC + LINQ</span>
+          </div>
+          <h2>MVC + LINQ</h2>
+          <p>
+            A C#/.NET project focused on structure: models, controllers, queries, data shaping, and keeping
+            logic readable instead of letting everything melt into one giant method.
+          </p>
+          <ul>
+            <li>Good evidence of C# fundamentals and comfort with common .NET patterns.</li>
+            <li>Shows the beginning of database-style thinking through filtering, selecting, and transforming data.</li>
+          </ul>
+          <a href="https://github.com/desiree25sfj/mvc-linq" target="_blank" rel="noreferrer">View on GitHub</a>
+        </article>
+
+        <article class="case-card" id="rest-api">
+          <div class="case-top">
+            <span>C#</span>
+            <span>Backend</span>
+            <span>REST API</span>
+          </div>
+          <h2>REST API</h2>
+          <p>
+            The most direct C# backend portfolio piece: routes, request and response flow, data contracts, and the habit
+            of thinking about how another program would consume the functionality.
+          </p>
+          <ul>
+            <li>Good evidence for junior C# backend roles because APIs are close to real team work.</li>
+            <li>Best next improvement: document endpoints, sample requests, and expected responses in the README.</li>
+          </ul>
+          <a href="https://github.com/desiree25sfj/rest-api" target="_blank" rel="noreferrer">View on GitHub</a>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <p>Built with HTML, CSS, and a junior developer's suspicious amount of determination.</p>
+        <a href="https://github.com/desiree25sfj" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/tetris-demo.js"></script>
+  </body>
+</html>

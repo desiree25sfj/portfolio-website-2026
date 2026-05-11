@@ -1,441 +1,159 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <!--
-    ╔══════════════════════════════════════════════════════════════════╗
-    ║  index.html — Portfolio Entry Point                              ║
-    ║  2026 Web Standards: Semantic HTML5, ESM, native lazy-loading    ║
-    ╚══════════════════════════════════════════════════════════════════╝
-
-    KEY MODERN PATTERNS USED:
-    • <search> element (HTML Living Standard) — replaces role="search" divs
-    • <script type="module"> — native ES Modules, no bundler needed
-    • loading="lazy" — native browser lazy-loading for images/iframes
-    • fetchpriority="high" — Resource Hints Level 1 for LCP optimisation
-    • <link rel="preconnect"> — early connection hints for font CDNs
-    • Full ARIA labelling for landmark navigation
-  -->
-
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Portfolio of [Your Name] — designer & front-end engineer crafting thoughtful digital experiences." />
-    <meta name="theme-color" content="#0a0a0f" />
-
-    <!-- ═══════════════════════════════════
-         Open Graph / Social Sharing
-    ═══════════════════════════════════ -->
-    <meta property="og:title" content="[Your Name] — Portfolio" />
-    <meta property="og:description" content="Designer & front-end engineer." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://yoursite.com" />
-    <!--
-      Replace og:image with a real 1200×630 social preview image
-      <meta property="og:image" content="/assets/images/og-cover.jpg" />
-    -->
-
-    <title>[Your Name] — Portfolio</title>
-
-    <!-- ═══════════════════════════════════
-         Preconnect: cut latency for fonts
-    ═══════════════════════════════════ -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!--
-      Google Fonts — display=swap prevents FOIT (Flash of Invisible Text).
-      Chosen pair: "DM Serif Display" (editorial, distinctive) +
-                   "DM Mono" (clean, technical body / code).
-      Swap these freely — this is just the design system's type ramp origin.
-    -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap"
-      rel="stylesheet"
+    <meta
+      name="description"
+      content="Portfolio for Desiree, a junior backend developer learning C#, MVC, LINQ, REST APIs, and practical software development."
     />
-
-    <!-- ═══════════════════════════════════
-         Stylesheets — order matters for
-         the Cascade (globals first!)
-    ═══════════════════════════════════ -->
-
-    <!-- 1. Design system: reset, tokens, base styles, @layer definitions -->
+    <title>Desiree | Junior Backend Developer</title>
     <link rel="stylesheet" href="css/global.css" />
-
-    <!-- 2. Navbar component — scoped to .navbar -->
-    <link rel="stylesheet" href="components/navbar/navbar.css" />
-
-    <!-- 3. Hero component -->
-    <link rel="stylesheet" href="components/hero/hero.css" />
-
-    <!--
-      4. Page-specific stylesheets would follow here, e.g.:
-      <link rel="stylesheet" href="css/pages/home.css" />
-    -->
-
-    <!-- ═══════════════════════════════════
-         Favicon — SVG (scalable, no .ico)
-    ═══════════════════════════════════ -->
-    <!--
-      <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml" />
-      <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
-    -->
   </head>
-
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- ═══════════════════════════════════════════════════════════════
-         SKIP NAVIGATION LINK
-         First focusable element; only visible on keyboard focus.
-         Critical for screen reader / keyboard-only users.
-    ═══════════════════════════════════════════════════════════════════ -->
-    <a class="skip-link" href="#main-content">Skip to main content</a>
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         <header> — Site-level banner landmark
-         Contains the primary navigation and global branding.
-         role="banner" is implicit on <header> when inside <body>.
-    ═══════════════════════════════════════════════════════════════════ -->
-    <header class="site-header" aria-label="Site header">
-
-      <!--
-        <nav> establishes a navigation landmark (role="navigation").
-        aria-label differentiates multiple <nav> elements on the page.
-      -->
-      <nav class="navbar" aria-label="Primary navigation">
-
-        <!-- Brand / Logo -->
-        <a class="navbar__brand" href="/" aria-label="[Your Name] — home">
-          <!-- Inline SVG logo preferred for crispness at all sizes. -->
-          <!-- TODO: replace with your actual logo SVG or wordmark       -->
-          <span class="navbar__logo-text" aria-hidden="true">YN</span>
+    <header class="site-header">
+      <nav class="nav container" aria-label="Main navigation">
+        <a class="brand" href="index.html" aria-label="Home">
+          <span class="brand-mark">D</span>
+          <span>Desiree</span>
         </a>
 
-        <!--
-          <search> — HTML Living Standard element (2023+).
-          Semantic replacement for <div role="search">.
-          Wraps any search UI; here used for site-wide search.
-          Comment out or remove if you don't need search.
-        -->
-        <search class="navbar__search" aria-label="Site search">
-          <label for="site-search" class="sr-only">Search</label>
-          <input
-            id="site-search"
-            class="navbar__search-input"
-            type="search"
-            name="q"
-            placeholder="Search…"
-            autocomplete="off"
-            aria-label="Search this site"
-          />
-          <button class="navbar__search-btn" type="submit" aria-label="Submit search">
-            <!-- TODO: replace with SVG magnifier icon -->
-            <span aria-hidden="true">↵</span>
-          </button>
-        </search>
-
-        <!-- Primary link list -->
-        <ul class="navbar__list" role="list">
-          <!-- aria-current="page" set dynamically by navbar.js -->
-          <li><a class="navbar__link" href="/" aria-current="page">Home</a></li>
-          <li><a class="navbar__link" href="about.html">About</a></li>
-          <li><a class="navbar__link" href="projects.html">Projects</a></li>
-          <!-- TODO: add more nav items as the portfolio grows -->
-        </ul>
-
-        <!-- Hamburger toggle — visible on narrow viewports, hidden on wide -->
-        <button
-          class="navbar__toggle"
-          type="button"
-          aria-expanded="false"
-          aria-controls="navbar-menu"
-          aria-label="Open navigation menu"
-        >
-          <!--
-            Three-line burger icon drawn with CSS via .navbar__toggle spans.
-            Animated to × on open state by navbar.js toggling aria-expanded.
-          -->
-          <span class="navbar__toggle-bar" aria-hidden="true"></span>
-          <span class="navbar__toggle-bar" aria-hidden="true"></span>
-          <span class="navbar__toggle-bar" aria-hidden="true"></span>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span class="sr-only">Menu</span>
+          <span></span>
+          <span></span>
+          <span></span>
         </button>
 
+        <ul class="nav-links" id="nav-links" role="list">
+          <li><a href="index.html" aria-current="page">Home</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="https://github.com/desiree25sfj" target="_blank" rel="noreferrer">GitHub</a></li>
+        </ul>
       </nav>
     </header>
 
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         <main> — Primary content landmark
-         id="main-content" is the skip-link target.
-         Only ONE <main> per page.
-    ═══════════════════════════════════════════════════════════════════ -->
-    <main id="main-content" tabindex="-1">
-
-      <!--
-        ─────────────────────────────────────────
-        HERO SECTION
-        ─────────────────────────────────────────
-        Uses <section> with an aria-labelledby pointing at the visible
-        heading — this creates an accessible landmark with a human-readable
-        name that screen readers announce when jumping between regions.
-      -->
-      <!--
-        ─────────────────────────────────────────────────────────────────
-        HERO SECTION
-        ─────────────────────────────────────────────────────────────────
-        Architectural editorial hero.
-        Structure:
-          .hero__grid-lines  — animated hairline grid (decorative, aria-hidden)
-          .hero__canvas      — JS ambient particle field
-          .hero__gutter-label — vertical index label in left gutter column
-          .hero__main        — headline + subtitle + CTAs
-          .hero__side        — availability status + metadata
-          .hero__bottom-bar  — scroll nudge + project count
-      -->
-      <section class="hero" aria-labelledby="hero-heading">
-
-        <!-- ── Decorative grid lines ── -->
-        <div class="hero__grid-lines" aria-hidden="true">
-          <!-- Horizontal lines -->
-          <div class="line line--h"></div>
-          <div class="line line--h"></div>
-          <div class="line line--h"></div>
-          <div class="line line--h"></div>
-          <!-- Vertical lines -->
-          <div class="line line--v"></div>
-          <div class="line line--v"></div>
-          <div class="line line--v"></div>
-          <div class="line line--v"></div>
-          <!-- Accent bottom rule -->
-          <div class="line line--accent"></div>
+    <main id="main">
+      <section class="hero container">
+        <div class="hero-copy">
+          <p class="eyebrow">Junior backend developer | C# | MVC | REST APIs</p>
+          <h1>I build small, useful things and explain what I learned while building them.</h1>
+          <p class="hero-text">
+            I am fresh out of my first programming course and focused on backend development with C#.
+            My strongest projects are small but real C# builds: Tetris, MVC/LINQ practice, and REST API work.
+            The point is not to pretend I am senior. The point is to show that I can learn, finish, debug,
+            and explain what I built.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="projects.html">See projects</a>
+            <a class="button secondary" href="about.html">Read my story</a>
+          </div>
         </div>
 
-        <!-- ── Particle canvas — populated by hero.js ── -->
-        <canvas
-          class="hero__canvas"
-          aria-hidden="true"
-          role="presentation"
-        ></canvas>
+        <div class="hero-visual" aria-label="Backend project notes">
+          <div class="terminal">
+            <div class="terminal-bar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <pre><code>public class Developer
+{
+    public string Level => "Junior";
+    public string Focus => "Backend";
 
-        <!-- ── Left gutter: vertical index label ── -->
-        <span class="hero__gutter-label" aria-hidden="true">
-          Portfolio — 2026
-        </span>
+    public void Improve()
+    {
+        Build();
+        Debug();
+        AskBetterQuestions();
+    }
+}</code></pre>
+          </div>
+        </div>
+      </section>
 
-        <!-- ── Main content column ── -->
-        <div class="hero__main">
+      <section class="section container">
+        <div class="section-heading">
+          <p class="eyebrow">What employers should notice</p>
+          <h2>Not years of experience. Evidence of momentum.</h2>
+        </div>
 
-          <!-- Kicker / overline -->
-          <p class="hero__kicker" aria-label="Role">
-            Designer &amp; Front-End Engineer
-          </p>
+        <div class="proof-grid">
+          <article class="proof-card">
+            <h3>C# fundamentals</h3>
+            <p>Classes, methods, control flow, collections, debugging, and learning how to structure small programs without making a dramatic mess.</p>
+          </article>
+          <article class="proof-card">
+            <h3>Backend mindset</h3>
+            <p>I like the logic layer: data, rules, validation, edge cases, and the quiet satisfaction of making features behave correctly.</p>
+          </article>
+          <article class="proof-card">
+            <h3>Learning in public</h3>
+            <p>My projects are small, but they show progression. The important bit is that I can explain choices, tradeoffs, and what I would improve next.</p>
+          </article>
+        </div>
+      </section>
 
-          <!--
-            Headline: each line is individually animated via .hero__title-line.
-            The clip-path wipe reveal is handled by CSS @keyframes wipeUp.
-            TODO: replace with your name / tagline.
-          -->
-          <h1 id="hero-heading" class="hero__title">
-            <span class="hero__title-line">Crafting</span>
-            <span class="hero__title-line"><em>digital</em></span>
-            <span class="hero__title-line">
-              <!-- .outline = CSS -webkit-text-stroke hollow letterforms -->
-              <span class="outline">experiences</span>.
-            </span>
-          </h1>
-
-          <!--
-            Scramble subtitle:
-            data-final = the real text revealed after the scramble.
-            hero.js reads this attribute and runs the effect.
-            aria-label on the wrapper holds the accessible name
-            so screen readers get the final text immediately.
-            TODO: update with your elevator pitch.
-          -->
-          <p class="hero__scramble" aria-label="Designer and front-end engineer. Based in your city. Available for select projects in 2026.">
-            <span
-              class="hero__scramble-text"
-              data-final="Designer. Engineer. Based in [City]. Available 2026."
-            >
-              Designer. Engineer. Based in [City]. Available 2026.
-            </span>
-          </p>
-
-          <!-- CTAs -->
-          <div class="hero__cta-row">
-            <a class="btn btn--primary" href="projects.html">View work</a>
-            <a class="btn btn--ghost"   href="about.html">About me</a>
+      <section class="section section-alt">
+        <div class="container split">
+          <div>
+            <p class="eyebrow">Featured work</p>
+            <h2>Starter projects that tell a real story.</h2>
+            <p>
+              These are the repositories I would put in front of employers first. They are C# projects
+              that show logic, backend concepts, and enough persistence to be more interesting than a pile of tiny exercises.
+            </p>
           </div>
 
-        </div><!-- /.hero__main -->
-
-        <!-- ── Right side column ── -->
-        <aside class="hero__side" aria-label="Availability and details">
-
-          <!-- Pulsing green availability pill -->
-          <div class="hero__status" role="status" aria-live="polite">
-            Available for work
+          <div class="project-list">
+            <article class="project-row">
+              <div>
+                <h3>Tetris</h3>
+                <p>A C# WinForms game project that shows logic, state, rules, and the patience required to make moving pieces behave.</p>
+              </div>
+              <a href="projects.html#tetris">Details</a>
+            </article>
+            <article class="project-row">
+              <div>
+                <h3>MVC + LINQ</h3>
+                <p>A C# learning project focused on models, queries, and separating responsibilities instead of stuffing everything into one file.</p>
+              </div>
+              <a href="projects.html#mvc-linq">Details</a>
+            </article>
+            <article class="project-row">
+              <div>
+                <h3>REST API</h3>
+                <p>A C# backend project that shows endpoints, request/response thinking, and the beginning of production-shaped habits.</p>
+              </div>
+              <a href="projects.html#rest-api">Details</a>
+            </article>
           </div>
-
-          <!-- Metadata stack — TODO: update values -->
-          <dl class="hero__meta">
-            <div class="hero__meta-item">
-              <dt class="label">Based in</dt>
-              <dd class="value">[Your City]</dd>
-            </div>
-            <div class="hero__meta-item">
-              <dt class="label">Projects</dt>
-              <!-- TODO: update count -->
-              <dd class="value">24 shipped</dd>
-            </div>
-            <div class="hero__meta-item">
-              <dt class="label">Experience</dt>
-              <!-- TODO: update years -->
-              <dd class="value">6+ months</dd>
-            </div>
-          </dl>
-
-        </aside><!-- /.hero__side -->
-
-        <!-- ── Bottom bar ── -->
-        <div class="hero__bottom-bar" aria-hidden="true">
-          <span class="hero__scroll-nudge">
-            <span class="arrow">↓</span>
-            Scroll to explore
-          </span>
-          <span class="hero__project-count">
-            Selected work — <span>06</span> case studies
-          </span>
-        </div>
-
-      </section>
-
-
-      <!--
-        ─────────────────────────────────────────
-        TODO SECTIONS — scaffold for future pages
-        ─────────────────────────────────────────
-        Each section below is a placeholder. Uncomment and build out
-        as the portfolio content is ready.
-      -->
-
-      <!-- FEATURED WORK
-      <section class="featured-work" aria-labelledby="featured-heading">
-        <div class="container">
-          <h2 id="featured-heading">Selected Work</h2>
-          <ul class="project-grid" role="list">
-            <li class="project-card">
-              <img
-                src="assets/images/project-thumb-1.webp"
-                alt="[Project name description]"
-                width="800"
-                height="600"
-                loading="lazy"
-              />
-              <h3>Project Title</h3>
-              <p>Brief description of the project and your role.</p>
-              <a href="projects.html#project-id">View case study →</a>
-            </li>
-          </ul>
         </div>
       </section>
-      -->
 
-      <!-- SERVICES / SKILLS
-      <section class="services" aria-labelledby="services-heading">
-        <div class="container">
-          <h2 id="services-heading">What I do</h2>
-          TODO: skill list / service cards
+      <section class="section container contact-panel">
+        <div>
+          <p class="eyebrow">Open to junior roles</p>
+          <h2>Looking for a place to grow into useful.</h2>
+          <p>
+            I am especially interested in backend work, C#, APIs, databases, and teams that value good questions.
+          </p>
         </div>
+        <a class="button primary" href="https://github.com/desiree25sfj" target="_blank" rel="noreferrer">View GitHub</a>
       </section>
-      -->
-
-      <!-- TESTIMONIALS
-      <section class="testimonials" aria-labelledby="testimonials-heading">
-        <div class="container">
-          <h2 id="testimonials-heading">Kind words</h2>
-          TODO: blockquote testimonials with <cite>
-        </div>
-      </section>
-      -->
-
-      <!-- CONTACT CTA
-      <section class="contact-cta" aria-labelledby="contact-heading">
-        <div class="container">
-          <h2 id="contact-heading">Let's work together</h2>
-          <a href="mailto:you@example.com" class="btn btn--primary">Get in touch</a>
-        </div>
-      </section>
-      -->
-
     </main>
 
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         <footer> — Contentinfo landmark (implicit role="contentinfo")
-         Contains copyright, secondary nav, social links.
-    ═══════════════════════════════════════════════════════════════════ -->
-    <footer class="site-footer" aria-label="Site footer">
-      <div class="container">
-
-        <nav class="footer-nav" aria-label="Footer navigation">
-          <ul role="list">
-            <li><a href="/">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="projects.html">Projects</a></li>
-            <!-- TODO: add privacy policy, colophon, etc. -->
-          </ul>
-        </nav>
-
-        <!-- Social links — aria-label describes where the link goes -->
-        <ul class="social-links" role="list" aria-label="Social profiles">
-          <li>
-            <a
-              href="https://github.com/yourusername"
-              rel="noopener noreferrer"
-              target="_blank"
-              aria-label="GitHub profile (opens in new tab)"
-            >
-              <!-- TODO: replace with inline SVG GitHub icon -->
-              GitHub
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://linkedin.com/in/yourprofile"
-              rel="noopener noreferrer"
-              target="_blank"
-              aria-label="LinkedIn profile (opens in new tab)"
-            >
-              LinkedIn
-            </a>
-          </li>
-          <!-- TODO: add more social links -->
-        </ul>
-
-        <p class="footer__copy">
-          <small>
-            &copy; <time datetime="2026">2026</time> [Your Name].
-            Built with vanilla HTML, CSS &amp; JS.
-          </small>
-        </p>
-
+    <footer class="footer">
+      <div class="container footer-inner">
+        <p>Built with HTML, CSS, and a junior developer's suspicious amount of determination.</p>
+        <a href="https://github.com/desiree25sfj" target="_blank" rel="noreferrer">GitHub</a>
       </div>
     </footer>
 
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         SCRIPTS — type="module" is the 2026 standard.
-
-         Benefits of ES Modules (<script type="module">):
-         • Deferred by default — never blocks HTML parsing
-         • Strict mode enabled automatically
-         • Top-level await support
-         • Native import/export; no bundler required for simple projects
-         • Scoped to module — no global scope pollution
-
-         NOTE: Modules are fetched with CORS, so file:// won't work.
-         Use a local dev server (e.g. `npx serve .` or VS Code Live Server).
-    ═══════════════════════════════════════════════════════════════════ -->
-    <script type="module" src="js/main.js"></script>
-
+    <script src="js/main.js"></script>
   </body>
 </html>
